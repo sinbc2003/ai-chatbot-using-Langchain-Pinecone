@@ -1,15 +1,25 @@
+import os
 from sentence_transformers import SentenceTransformer
 from pinecone import Pinecone
 from openai import OpenAI
 import streamlit as st
 
-client = OpenAI(api_key="")  # Replace with your OpenAI API key
+# Load environment variables
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
+PINECONE_ENVIRONMENT = os.getenv('PINECONE_ENVIRONMENT')
+PINECONE_INDEX_NAME = os.getenv('PINECONE_INDEX_NAME')
+
+if not all([OPENAI_API_KEY, PINECONE_API_KEY, PINECONE_ENVIRONMENT, PINECONE_INDEX_NAME]):
+    raise ValueError("Missing required environment variables. Please set OPENAI_API_KEY, PINECONE_API_KEY, PINECONE_ENVIRONMENT, and PINECONE_INDEX_NAME.")
+
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Initialize Pinecone
-pc = Pinecone(api_key='')  # Replace with your Pinecone API key
-index = pc.Index('')  # Replace with your Pinecone index name
+pc = Pinecone(api_key=PINECONE_API_KEY, environment=PINECONE_ENVIRONMENT)
+index = pc.Index(PINECONE_INDEX_NAME)
 
 def find_match(input):
     input_em = model.encode(input).tolist()
