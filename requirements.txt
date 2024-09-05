@@ -1,8 +1,11 @@
 streamlit
 streamlit_chat
-langchain
+langchain==0.2.16
+langchain-openai==0.1.23
 sentence_transformers
 openai
 unstructured
 unstructured[local-inference]
 pinecone-client
+
+
