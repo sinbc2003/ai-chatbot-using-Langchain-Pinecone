@@ -24,7 +24,17 @@ index = pc.Index(PINECONE_INDEX_NAME)
 def find_match(input):
     input_em = model.encode(input).tolist()
     result = index.query(vector=input_em, top_k=2, include_metadata=True)
-    return result['matches'][0]['metadata']['text'] + "\n" + result['matches'][1]['metadata']['text']
+    
+    matches = result.get('matches', [])
+    if not matches:
+        return "No matching results found."
+    
+    texts = []
+    for match in matches:
+        if 'metadata' in match and 'text' in match['metadata']:
+            texts.append(match['metadata']['text'])
+    
+    return "\n".join(texts) if texts else "No text content found in the matches."
 
 def query_refiner(conversation, query):
     response = client.chat.completions.create(
