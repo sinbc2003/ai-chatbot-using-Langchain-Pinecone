@@ -1,5 +1,5 @@
 from sentence_transformers import SentenceTransformer
-import pinecone
+from pinecone import Pinecone
 from openai import OpenAI
 import streamlit as st
 
@@ -7,15 +7,13 @@ client = OpenAI(api_key="")  # Replace with your OpenAI API key
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-pinecone.init(
-    api_key='',  # Replace with your Pinecone API key
-    environment=''  # Replace with your Pinecone environment
-)
-index = pinecone.Index('')  # Replace with your Pinecone index name
+# Initialize Pinecone
+pc = Pinecone(api_key='')  # Replace with your Pinecone API key
+index = pc.Index('')  # Replace with your Pinecone index name
 
 def find_match(input):
     input_em = model.encode(input).tolist()
-    result = index.query(input_em, top_k=2, include_metadata=True)
+    result = index.query(vector=input_em, top_k=2, include_metadata=True)
     return result['matches'][0]['metadata']['text'] + "\n" + result['matches'][1]['metadata']['text']
 
 def query_refiner(conversation, query):
